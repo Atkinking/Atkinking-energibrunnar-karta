@@ -1,0 +1,9 @@
+{
+  "name": "sbc-karta",
+  "private": true,
+  "description": "Karta över energibrunnar från SGU Brunnsarkiv",
+  "scripts": {
+    "start": "python3 -m http.server 8080 --bind 127.0.0.1",
+    "harvest:stockholm": "python3 scripts/harvest-stockholm-oppna-cache.py"
+  }
+}

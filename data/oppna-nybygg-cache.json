@@ -1,0 +1,209 @@
+{
+  "meta": {
+    "description": "Bundlad öppen cache från Stockholms stads Bygg- och plantjänst (pågående detaljplaner med bostadsinnehåll). Ersätter inte ByggR/Combify bygglovsregister; ingen inloggning krävs.",
+    "scope": "Stockholms stad (kommun 0180)",
+    "municipalities": [
+      "STOCKHOLM"
+    ],
+    "spatial_buffer_m": 50,
+    "harvested_at": "2026-11-13T21:36:14Z",
+    "sources": [
+      {
+        "name": "Bygg- och plantjänsten – pågående planarbeten",
+        "url": "https://etjanster.stockholm.se/Byggochplantjansten/pagaendeplanarbeten",
+        "license": "Öppen e-tjänst/öppna handlingar (Stockholms stad)",
+        "type": "HTML (offentliga planärenden)"
+      },
+      {
+        "name": "Kartunderlag planområde (diarienummer)",
+        "url": "https://kartor.stockholm.se/bios/servlet/app.htmlclient.servlets.GetMapForQuery/…",
+        "license": "Stockholms stad karttjänst (publik förhandsbild)",
+        "type": "WMS-bakgrund + internt planlager"
+      },
+      {
+        "name": "Geokodning reserv",
+        "url": "https://nominatim.openstreetmap.org/",
+        "license": "ODbL (endast där koordinat saknas från register)",
+        "type": "Nominatim (batch, ej i webbläsaren)"
+      }
+    ],
+    "notes": [
+      "ByggR och aktuella bygglovsärenden exponeras inte som bulk-öppet API.",
+      "Stadsarkivet (äldre bygglovsritningar) är historiskt och saknar maskinläsbar nybyggnadslayout för 2025–2026.",
+      "Dataportalen (open.stockholm.se) kräver manuell nedladdning per datamängd; JSON-sök API blockerades (403/500) vid harvest."
+    ],
+    "plan_count": 8,
+    "with_coordinates": 8,
+    "with_property_designation": 8
+  },
+  "permits": [
+    {
+      "id": "stockholm-plan-2017-02604",
+      "source": "stockholm_stad_bygg_plantjanst",
+      "procedure": "new_building",
+      "labels": [
+        "residential"
+      ],
+      "property_designation": "NORRMALM 4:41",
+      "municipality": "STOCKHOLM",
+      "longitude": 18.0629048,
+      "latitude": 59.3340818,
+      "decision_date": "2026-10-28",
+      "meta": {
+        "journal_id": "2017-02604",
+        "project_name": "Norrmalm 4:41",
+        "stadsdel": "Norrmalm",
+        "bostader_planerade": null,
+        "geocode_method": "nominatim:NORRMALM 4:41, Stockholm, Sweden",
+        "data_class": "pagaende_dplan_bostad"
+      }
+    },
+    {
+      "id": "stockholm-plan-2021-08302",
+      "source": "stockholm_stad_bygg_plantjanst",
+      "procedure": "new_building",
+      "labels": [
+        "residential"
+      ],
+      "property_designation": "KÄRRTORP 1:1",
+      "municipality": "STOCKHOLM",
+      "longitude": 18.1154,
+      "latitude": 59.2857107,
+      "decision_date": "2026-10-06",
+      "meta": {
+        "journal_id": "2021-08302",
+        "project_name": "Del av fastigheten Kärrtorp 1:1 m.fl. vid Holmögaddsvägen, detaljplan",
+        "stadsdel": "Kärrtorp",
+        "bostader_planerade": 100,
+        "geocode_method": "nominatim:KÄRRTORP 1:1, Stockholm, Sweden",
+        "data_class": "pagaende_dplan_bostad"
+      }
+    },
+    {
+      "id": "stockholm-plan-2022-15055",
+      "source": "stockholm_stad_bygg_plantjanst",
+      "procedure": "new_building",
+      "labels": [
+        "residential"
+      ],
+      "property_designation": "LÅNGSJÖ GÅRD 10",
+      "municipality": "STOCKHOLM",
+      "longitude": 17.9729971,
+      "latitude": 59.2661934,
+      "decision_date": "2026-11-04",
+      "meta": {
+        "journal_id": "2022-15055",
+        "project_name": "Fastigheten Långsjö gård 10 m.fl, detaljplan samt fastigheten Långsjö gård 11, ändring av detaljplan",
+        "stadsdel": "Långsjö",
+        "bostader_planerade": 3,
+        "geocode_method": "nominatim:LÅNGSJÖ GÅRD 10, Stockholm, Sweden",
+        "data_class": "pagaende_dplan_bostad"
+      }
+    },
+    {
+      "id": "stockholm-plan-2024-04042",
+      "source": "stockholm_stad_bygg_plantjanst",
+      "procedure": "new_building",
+      "labels": [
+        "residential"
+      ],
+      "property_designation": "SÄTRA GÅRD 1",
+      "municipality": "STOCKHOLM",
+      "longitude": 17.9108713,
+      "latitude": 59.2884347,
+      "decision_date": "2026-10-06",
+      "meta": {
+        "journal_id": "2024-04042",
+        "project_name": "Fastigheten Sätra Gård 1 m.fl., detaljplan",
+        "stadsdel": "Sätra",
+        "bostader_planerade": 80,
+        "geocode_method": "nominatim:SÄTRA GÅRD 1, Stockholm, Sweden",
+        "data_class": "pagaende_dplan_bostad"
+      }
+    },
+    {
+      "id": "stockholm-plan-2024-13114",
+      "source": "stockholm_stad_bygg_plantjanst",
+      "procedure": "new_building",
+      "labels": [
+        "residential"
+      ],
+      "property_designation": "VÄSTERGÖTLAND 21",
+      "municipality": "STOCKHOLM",
+      "longitude": 18.0710989,
+      "latitude": 59.3174775,
+      "decision_date": "2026-10-28",
+      "meta": {
+        "journal_id": "2024-13114",
+        "project_name": "Fastigheten Västergötland 21, detaljplan",
+        "stadsdel": "Södermalm",
+        "bostader_planerade": null,
+        "geocode_method": "nominatim:VÄSTERGÖTLAND 21, Stockholm, Sweden",
+        "data_class": "pagaende_dplan_bostad"
+      }
+    },
+    {
+      "id": "stockholm-plan-2025-14511",
+      "source": "stockholm_stad_bygg_plantjanst",
+      "procedure": "new_building",
+      "labels": [
+        "residential"
+      ],
+      "property_designation": "ISAFJORD 4",
+      "municipality": "STOCKHOLM",
+      "longitude": 17.9424221,
+      "latitude": 59.4031236,
+      "decision_date": "2026-10-06",
+      "meta": {
+        "journal_id": "2025-14511",
+        "project_name": "Del av Isafjord 4 vid Kistagången, detaljplan",
+        "stadsdel": "Kista",
+        "bostader_planerade": 150,
+        "geocode_method": "nominatim:Kista, Stockholm, Sweden",
+        "data_class": "pagaende_dplan_bostad"
+      }
+    },
+    {
+      "id": "stockholm-plan-2025-16283",
+      "source": "stockholm_stad_bygg_plantjanst",
+      "procedure": "new_building",
+      "labels": [
+        "residential"
+      ],
+      "property_designation": "DOROTEA 16",
+      "municipality": "STOCKHOLM",
+      "longitude": 17.9114464,
+      "latitude": 59.371806,
+      "decision_date": "2026-11-04",
+      "meta": {
+        "journal_id": "2025-16283",
+        "project_name": "Fastigheten Dorotea 16, ändring av detaljplan",
+        "stadsdel": "Sundby",
+        "bostader_planerade": 1,
+        "geocode_method": "nominatim:DOROTEA 16, Stockholm, Sweden",
+        "data_class": "pagaende_dplan_bostad"
+      }
+    },
+    {
+      "id": "stockholm-plan-2025-16308",
+      "source": "stockholm_stad_bygg_plantjanst",
+      "procedure": "new_building",
+      "labels": [
+        "residential"
+      ],
+      "property_designation": "CYKLAMEN 12",
+      "municipality": "STOCKHOLM",
+      "longitude": 17.8807432,
+      "latitude": 59.3785987,
+      "decision_date": "2026-10-20",
+      "meta": {
+        "journal_id": "2025-16308",
+        "project_name": "Fastigheten Cyklamen 12, detaljplan",
+        "stadsdel": "Solhem",
+        "bostader_planerade": null,
+        "geocode_method": "nominatim:CYKLAMEN 12, Stockholm, Sweden",
+        "data_class": "pagaende_dplan_bostad"
+      }
+    }
+  ]
+}
