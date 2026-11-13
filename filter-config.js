@@ -1,57 +1,37 @@
 /**
- * Klientfilter: nybygge vs befintlig bostad.
+ * Klientfilter: nybyggda bostäder via externt register (primärt).
  *
- * SGU Brunnsarkiv har inget officiellt fält för nybygge – endast fritext i
- * `lage_specifikt` och `allman_anmarkning`.
- *
- * Räknat mot API (ENE, 2025-10-01–2026-03-31, 2026-11-13):
- * - Totalt: 5 028 poster
- * - Mönster nybygg|nyproduktion (äldre): 10
- * - Inkludering nedan (fash 1): 11
- * - Strikt läge med exkludering (fash 1b): 11 (ingen av inkluderingarna träffades av exkludering)
+ * SGU Brunnsarkiv saknar fält för nybygge. Textfilter (SBC-5) ersätts av
+ * registerjoin i `nybygg-register.js` (fastighetsbeteckning + buffer ~50 m).
  */
 
-/** Fält som kombineras till söktext (gemensam policy). */
-export const NYBYGGE_TEXT_PROPERTY_KEYS = ["lage_specifikt", "allman_anmarkning"];
+/** @type {Set<string> | null} Träffar från nybyggnadsregister (brunnsid). */
+let registerMatchedBrunnsIds = null;
 
-/**
- * Fash 1 – text tyder på nybygge (case-insensitive, svenska tecken).
- * Undviker falska träffar på t.ex. «Benny» genom helordsmönster, inte enkel «ny».
- */
-export const NYBYGGE_INCLUDE_PATTERN = new RegExp(
-  [
-    "nybygg(?:nad|e)?",
-    "nyproduktion",
-    "nybebyggelse",
-    "ny(?:a|tt)?\\s+byggn?ad",
-  ].join("|"),
-  "i"
-);
-
-/**
- * Fash 1b – när strikt läge är på: exkludera poster där fritext tydligt avser befintlig bostad
- * eller kompletteringsborrning vid gamla hål.
- */
-export const NYBYGGE_STRICT_EXCLUDE_PATTERN = new RegExp(
-  [
-    "befintlig\\s+bostad",
-    "befintligt\\s+boende",
-    "befintligt\\s+hus",
-    "gammal[a]?\\s+bostad",
-    "gamla\\s+bostad",
-    "äldre\\s+bostad",
-    "\\bvilla\\b",
-    "\\bsmåhus\\b",
-    "enskilt\\s+boende",
-    "ersätter\\s+äldre",
-    "gamla\\s+hålet",
-    "kompletterings\\s+borrning",
-  ].join("|"),
-  "i"
-);
-
-/** @type {Set<string> | null} Valfri extern allowlist (t.ex. SBC CSV med brunnsid). */
+/** @type {Set<string> | null} Valfri manuell allowlist (CSV/JSON). */
 let externalAllowlistIds = null;
+
+/**
+ * Sätt mängd brunnsid som matchar nybyggnadsregister.
+ * @param {Iterable<string> | null | undefined} ids
+ */
+export function setRegisterMatchedBrunnsIds(ids) {
+  if (!ids) {
+    registerMatchedBrunnsIds = null;
+    return;
+  }
+  registerMatchedBrunnsIds = new Set(
+    [...ids].map((id) => String(id).trim()).filter(Boolean)
+  );
+}
+
+export function hasRegisterMatches() {
+  return Boolean(registerMatchedBrunnsIds?.size);
+}
+
+export function getRegisterMatchCount() {
+  return registerMatchedBrunnsIds?.size ?? 0;
+}
 
 /**
  * Sätt allowlist från extern lista. null/undefined rensar.
@@ -85,61 +65,44 @@ export async function loadExternalAllowlistFromUrl(url) {
   setExternalAllowlistIds(ids.filter(Boolean));
 }
 
-export function getCombinedNybyggeText(properties) {
-  return NYBYGGE_TEXT_PROPERTY_KEYS.map((key) =>
-    String(properties?.[key] ?? "").trim()
-  )
-    .filter(Boolean)
-    .join(" ");
-}
-
-export function matchesNybyggeText(properties) {
-  const text = getCombinedNybyggeText(properties);
-  if (!text) return false;
-  return NYBYGGE_INCLUDE_PATTERN.test(text);
-}
-
-export function matchesStrictExclude(properties) {
-  const text = getCombinedNybyggeText(properties);
-  if (!text) return false;
-  return NYBYGGE_STRICT_EXCLUDE_PATTERN.test(text);
-}
-
 export function isOnExternalAllowlist(properties) {
   if (!externalAllowlistIds?.size) return false;
   const id = properties?.brunnsid;
   return id != null && externalAllowlistIds.has(String(id));
 }
 
+export function isRegisterMatch(properties) {
+  if (!registerMatchedBrunnsIds?.size) return false;
+  const id = properties?.brunnsid;
+  return id != null && registerMatchedBrunnsIds.has(String(id));
+}
+
 /**
  * @param {object} feature GeoJSON-feature
- * @param {{ onlyNybygge: boolean, strictNybygge: boolean }} options
+ * @param {{ onlyNybyggRegister: boolean }} options
  */
-export function featurePassesNybyggeFilter(feature, options) {
-  if (!options.onlyNybygge) return true;
+export function featurePassesNybyggRegisterFilter(feature, options) {
+  if (!options.onlyNybyggRegister) return true;
 
   const props = feature.properties ?? {};
-  const textMatch = matchesNybyggeText(props);
-  const allowlisted = isOnExternalAllowlist(props);
-
-  if (!textMatch && !allowlisted) return false;
-  if (options.strictNybygge && textMatch && matchesStrictExclude(props)) {
-    return allowlisted;
-  }
-  return true;
+  return isRegisterMatch(props) || isOnExternalAllowlist(props);
 }
 
 /**
  * @param {object[]} features
- * @param {{ onlyNybygge: boolean, strictNybygge: boolean }} options
+ * @param {{ onlyNybyggRegister: boolean }} options
  */
 export function filterFeaturesForMap(features, options) {
-  if (!options.onlyNybygge) return features;
-  return features.filter((f) => featurePassesNybyggeFilter(f, options));
+  if (!options.onlyNybyggRegister) return features;
+  return features.filter((f) => featurePassesNybyggRegisterFilter(f, options));
 }
 
-export function describeNybyggeFilterCounts(shown, total) {
+export function describeNybyggRegisterFilterCounts(shown, total, registerTotal) {
   const x = Number(shown).toLocaleString("sv-SE");
   const y = Number(total).toLocaleString("sv-SE");
-  return `Visar ${x} av ${y} (filter: nybygge)`;
+  const r =
+    registerTotal != null
+      ? `, registerträffar ${Number(registerTotal).toLocaleString("sv-SE")}`
+      : "";
+  return `Visar ${x} av ${y} (filter: nybyggda bostäder via register${r})`;
 }

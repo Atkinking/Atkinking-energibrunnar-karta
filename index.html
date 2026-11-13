@@ -58,8 +58,9 @@
           <p class="subtitle">
             Data från SGU:s Brunnsarkiv (öppna data, CC0). Projektnamnet «SBC» avser
             här registerkällan för energibrunnar, inte SBC/Sveriges BostadsrättsCentrum.
-            SGU saknar fält för nybygge – filtret «Endast nybygge» bygger på fritext i
-            läges- och anmärkningsfält (uppskattningsvis cirka 10–11 träffar av 5 028 i perioden).
+            Nybyggda bostäder filtreras via externt register (demodata eller Combify),
+            inte via fritext i Brunnsarkivet. Spatial buffer cirka 50 m och matchning på
+            fastighetsbeteckning mot SGU-fältet <code>fastighet</code>.
           </p>
         </div>
         <div class="stats" id="stats" aria-live="polite">
@@ -82,19 +83,47 @@
         </fieldset>
 
         <fieldset>
-          <legend>Visning</legend>
+          <legend>Nybyggda bostäder</legend>
           <label class="check-row">
-            <input type="checkbox" id="filter-nybygge" />
-            Endast nybygge
+            <input type="checkbox" id="filter-nybygg-register" />
+            Visa endast med match i nybyggregister
           </label>
-          <label class="check-row check-row-nested">
-            <input type="checkbox" id="filter-nybygge-strict" disabled />
-            Strikt läge (exkl. tydlig befintlig bostad)
+          <label class="select-row" for="register-mode">
+            Registerkälla
+            <select id="register-mode" name="register-mode">
+              <option value="demo" selected>Demodata (Falkenberg, Torsby, Värnamo)</option>
+              <option value="combify">Combify API (nyckel krävs)</option>
+              <option value="url">Egen JSON-URL</option>
+            </select>
           </label>
+          <div id="combify-key-row" class="register-extra" hidden>
+            <label class="text-row" for="combify-api-key">Combify API-nyckel</label>
+            <input
+              id="combify-api-key"
+              type="password"
+              autocomplete="off"
+              placeholder="Saknar API-nyckel"
+            />
+            <button type="button" id="btn-save-combify-key" class="btn btn-small">
+              Spara nyckel (denna flik)
+            </button>
+          </div>
+          <div id="register-url-row" class="register-extra" hidden>
+            <label class="text-row" for="register-custom-url">URL till JSON-register</label>
+            <input
+              id="register-custom-url"
+              type="url"
+              placeholder="https://…/nybygg-register.json"
+            />
+          </div>
+          <p id="register-status" class="register-status" data-variant="info">
+            Laddar register …
+          </p>
           <p class="hint small filter-note">
-            Nybygge finns inte som eget attribut i Brunnsarkivet – bara i fritext
-            (<code>lage_specifikt</code>, <code>allman_anmarkning</code>). Vid behov kan
-            en extern SBC-lista kopplas in som allowlist.
+            Combify sandbox/produktion använder
+            <code>GET /v1/permits?labels=residential&amp;procedure=new_building</code>.
+            Utan nyckel: använd demoläge. Hemlighet för serverproxy:
+            <code>COMBIFY_API_KEY</code> (se plan).
           </p>
         </fieldset>
 

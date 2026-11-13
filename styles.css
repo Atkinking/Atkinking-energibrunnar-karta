@@ -188,6 +188,69 @@ legend {
   flex-shrink: 0;
 }
 
+.select-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin: 0.65rem 0 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.select-row select {
+  font-weight: 400;
+  padding: 0.45rem 0.5rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.4rem;
+  font-size: 0.88rem;
+}
+
+.register-extra {
+  margin-top: 0.5rem;
+}
+
+.register-extra input[type="password"],
+.register-extra input[type="url"] {
+  width: 100%;
+  padding: 0.5rem 0.55rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.4rem;
+  font-size: 0.88rem;
+  margin-bottom: 0.4rem;
+}
+
+.text-row {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 600;
+  margin-bottom: 0.3rem;
+}
+
+.btn-small {
+  font-size: 0.82rem;
+  padding: 0.4rem 0.65rem;
+}
+
+.register-status {
+  margin: 0.6rem 0 0;
+  padding: 0.55rem 0.65rem;
+  border-radius: 0.4rem;
+  font-size: 0.8rem;
+  line-height: 1.4;
+  background: #e2e8f0;
+  color: #334155;
+}
+
+.register-status[data-variant="ok"] {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.register-status[data-variant="error"] {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
 .check-row-nested {
   margin-left: 0.35rem;
   font-size: 0.82rem;

@@ -1,0 +1,119 @@
+{
+  "meta": {
+    "description": "Demodata för nybyggda bostäder (bostadslov). Koordinater hämtade från kända SGU-fritextträffar i projektperioden – ersätter inte riktiga bygglovsregister.",
+    "municipalities": ["FALKENBERG", "TORSBY", "VÄRNAMO"],
+    "spatial_buffer_m": 50
+  },
+  "permits": [
+    {
+      "id": "demo-1",
+      "source": "demo",
+      "procedure": "new_building",
+      "labels": ["residential"],
+      "property_designation": "ULLARED 8:8",
+      "municipality": "FALKENBERG",
+      "longitude": 12.71288652,
+      "latitude": 57.13492223,
+      "decision_date": "2025-08-01"
+    },
+    {
+      "id": "demo-2",
+      "source": "demo",
+      "procedure": "new_building",
+      "labels": ["residential"],
+      "property_designation": "KYRKSTÖTEN 1",
+      "municipality": "TORSBY",
+      "longitude": 13.01649661,
+      "latitude": 60.13861064,
+      "decision_date": "2025-08-01"
+    },
+    {
+      "id": "demo-3",
+      "source": "demo",
+      "procedure": "new_building",
+      "labels": ["residential"],
+      "property_designation": "ULLARED 8:8",
+      "municipality": "FALKENBERG",
+      "longitude": 12.71306756,
+      "latitude": 57.13493452,
+      "decision_date": "2025-08-01"
+    },
+    {
+      "id": "demo-4",
+      "source": "demo",
+      "procedure": "new_building",
+      "labels": ["residential"],
+      "property_designation": "ULLARED 8:8",
+      "municipality": "FALKENBERG",
+      "longitude": 12.71304174,
+      "latitude": 57.13481723,
+      "decision_date": "2025-08-01"
+    },
+    {
+      "id": "demo-5",
+      "source": "demo",
+      "procedure": "new_building",
+      "labels": ["residential"],
+      "property_designation": "KYRKSTÖTEN 1",
+      "municipality": "TORSBY",
+      "longitude": 13.01643761,
+      "latitude": 60.1383942,
+      "decision_date": "2025-08-01"
+    },
+    {
+      "id": "demo-6",
+      "source": "demo",
+      "procedure": "new_building",
+      "labels": ["residential"],
+      "property_designation": "ULLARED 8:8",
+      "municipality": "FALKENBERG",
+      "longitude": 12.71284364,
+      "latitude": 57.13481361,
+      "decision_date": "2025-08-01"
+    },
+    {
+      "id": "demo-7",
+      "source": "demo",
+      "procedure": "new_building",
+      "labels": ["residential"],
+      "property_designation": "ULLARED 8:8",
+      "municipality": "FALKENBERG",
+      "longitude": 12.71292774,
+      "latitude": 57.13505778,
+      "decision_date": "2025-08-01"
+    },
+    {
+      "id": "demo-8",
+      "source": "demo",
+      "procedure": "new_building",
+      "labels": ["residential"],
+      "property_designation": "KYRKSTÖTEN 1",
+      "municipality": "TORSBY",
+      "longitude": 13.01627513,
+      "latitude": 60.13840074,
+      "decision_date": "2025-08-01"
+    },
+    {
+      "id": "demo-9",
+      "source": "demo",
+      "procedure": "new_building",
+      "labels": ["residential"],
+      "property_designation": "ULLARED 8:8",
+      "municipality": "FALKENBERG",
+      "longitude": 12.71309448,
+      "latitude": 57.13503386,
+      "decision_date": "2025-08-01"
+    },
+    {
+      "id": "demo-10",
+      "source": "demo",
+      "procedure": "new_building",
+      "labels": ["residential"],
+      "property_designation": "HERRESTAD 1:259",
+      "municipality": "VÄRNAMO",
+      "longitude": 13.88527894,
+      "latitude": 57.19643257,
+      "decision_date": "2025-08-01"
+    }
+  ]
+}
