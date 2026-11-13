@@ -108,7 +108,10 @@
           <label class="select-row" for="register-mode">
             Registerkälla
             <select id="register-mode" name="register-mode">
-              <option value="oppna-cache" selected>Öppen cache – Stockholm stad</option>
+              <option value="lan-rest-cache" selected>
+                Öppen cache – Stockholms län (REST)
+              </option>
+              <option value="oppna-cache">Öppen cache – Stockholm stad (plan)</option>
               <option value="demo">Demodata (Falkenberg, Torsby, Värnamo)</option>
               <option value="combify">Combify API (nyckel krävs)</option>
               <option value="url">Egen JSON-URL</option>
@@ -140,7 +143,8 @@
           <p class="hint small filter-note">
             Combify sandbox/produktion använder
             <code>GET /v1/permits?labels=residential&amp;procedure=new_building</code>.
-            Gratisläge: «Öppen cache – Stockholm stad» (ingen nyckel). Hemlighet för serverproxy:
+            Gratisläge: «Öppen cache – Stockholms län (REST)» eller stadens plan-cache (ingen nyckel).
+            Hemlighet för serverproxy:
             <code>COMBIFY_API_KEY</code> (se plan).
           </p>
         </fieldset>

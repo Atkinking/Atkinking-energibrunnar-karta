@@ -8,6 +8,7 @@ import {
   COMBIFY_PAGE_SIZE,
   DEFAULT_COMBIFY_BASE,
   DEMO_REGISTER_URL,
+  LAN_REST_CACHE_URL,
   OPNA_CACHE_URL,
   PERMIT_DATE_FROM,
   PERMIT_DATE_TO,
@@ -232,6 +233,20 @@ export async function loadOppnaCacheRegister() {
     ...result,
     source: "oppna-cache",
     label: `Öppen cache – Stockholm stad (${result.permits.length} bostadsplaner, ${muni})`,
+  };
+}
+
+export async function loadLanRestCacheRegister() {
+  const result = await loadRegisterFromUrl(LAN_REST_CACHE_URL);
+  const kommuner = [
+    ...new Set(
+      result.permits.map((p) => p.municipality).filter(Boolean)
+    ),
+  ];
+  return {
+    ...result,
+    source: "lan-rest-cache",
+    label: `Öppen cache – Stockholms län REST (${result.permits.length} poster, ${kommuner.length} kommuner)`,
   };
 }
 

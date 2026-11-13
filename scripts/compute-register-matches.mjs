@@ -1,6 +1,6 @@
 /**
  * CLI: registerjoin-statistik för VP-period (använder nybygg-register.js).
- * node scripts/compute-register-matches.mjs [demo|oppna-cache]
+ * node scripts/compute-register-matches.mjs [demo|oppna-cache|lan-rest-cache]
  */
 
 import { readFile } from "node:fs/promises";
@@ -42,7 +42,11 @@ async function fetchAllFeatures() {
 
 async function loadRegisterPermits() {
   const rel =
-    mode === "demo" ? "data/demo-nybygg-register.json" : "data/oppna-nybygg-cache.json";
+    mode === "demo"
+      ? "data/demo-nybygg-register.json"
+      : mode === "lan-rest-cache"
+        ? "data/lan-rest-nybygg-cache.json"
+        : "data/oppna-nybygg-cache.json";
   const raw = await readFile(path.join(root, rel), "utf8");
   const payload = JSON.parse(raw);
   return parseRegisterPayload(payload);

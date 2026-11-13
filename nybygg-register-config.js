@@ -5,17 +5,21 @@
 
 export const NYBYGG_REGISTER_MODES = {
   oppnaCache: "oppna-cache",
+  lanRestCache: "lan-rest-cache",
   demo: "demo",
   combify: "combify",
   url: "url",
 };
 
-/** Standard – bundlad öppen cache (Stockholms stad), ingen nyckel. */
-export const DEFAULT_REGISTER_MODE = NYBYGG_REGISTER_MODES.oppnaCache;
+/** Standard – läns-cache (REST/WFS där tillgängligt), ingen nyckel. */
+export const DEFAULT_REGISTER_MODE = NYBYGG_REGISTER_MODES.lanRestCache;
 
 export const DEMO_REGISTER_URL = "data/demo-nybygg-register.json";
 
 export const OPNA_CACHE_URL = "data/oppna-nybygg-cache.json";
+
+/** Bundlad läns-cache (REST/WFS/HTML) – Stockholms län. */
+export const LAN_REST_CACHE_URL = "data/lan-rest-nybygg-cache.json";
 
 export const COMBIFY_API_BASES = {
   production: "https://api.combify.com/v1",

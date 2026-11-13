@@ -9,6 +9,7 @@ import {
   computeRegisterMatchedBrunnsIds,
   fetchCombifyPermits,
   loadDemoRegister,
+  loadLanRestCacheRegister,
   loadOppnaCacheRegister,
   loadRegisterFromUrl,
 } from "./nybygg-register.js";
@@ -214,6 +215,10 @@ async function loadNybyggRegister(features) {
 
   if (mode === NYBYGG_REGISTER_MODES.oppnaCache) {
     return loadOppnaCacheRegister();
+  }
+
+  if (mode === NYBYGG_REGISTER_MODES.lanRestCache) {
+    return loadLanRestCacheRegister();
   }
 
   if (mode === NYBYGG_REGISTER_MODES.demo) {
