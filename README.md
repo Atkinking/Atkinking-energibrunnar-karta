@@ -18,6 +18,8 @@ Lösenordsskydd i webbläsaren (`auth.js` + `auth-config.js`, SHA-256-hash). Ses
 
 Statisk webbapp (HTML/CSS/JS + Leaflet). Hämtar GeoJSON från `api.sgu.se`.
 
+Nybyggda bostäder filtreras mot externt register (`nybygg-register.js`): demoläge utan nyckel, Combify med `x-api-key`, eller egen JSON-URL. Plan: se projektdoc `sbc-nybygg-register-plan.md`.
+
 ## Publicera (GitHub Pages / Vercel)
 
 Se projektets `docs/sbc-karta-mobil.md` i Cursor-store eller GitHub wiki/instruktioner från koordinator.
