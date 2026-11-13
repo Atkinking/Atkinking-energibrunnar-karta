@@ -21,53 +21,85 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <header class="topbar">
-      <div class="brand">
-        <h1>Energiborrhål på karta</h1>
-        <p class="subtitle">
-          Data från SGU:s Brunnsarkiv (öppna data, CC0). Projektnamnet «SBC» avser
-          här registerkällan för energibrunnar, inte SBC/Sveriges BostadsrättsCentrum.
+    <h1 class="visually-hidden">Energiborrhål på karta</h1>
+
+    <section
+      id="auth-gate"
+      class="auth-gate hidden"
+      aria-labelledby="auth-title"
+      aria-hidden="true"
+    >
+      <div class="auth-card">
+        <h2 id="auth-title">Logga in</h2>
+        <p class="auth-lead">
+          Kartan är skyddad med lösenord. Lösenordet gäller tills du stänger
+          webbläsarfliken.
         </p>
+        <form id="auth-form" class="auth-form" autocomplete="on">
+          <label for="auth-password">Lösenord</label>
+          <input
+            id="auth-password"
+            name="password"
+            type="password"
+            inputmode="text"
+            autocomplete="current-password"
+            required
+          />
+          <p id="auth-error" class="auth-error" role="alert" aria-live="polite"></p>
+          <button type="submit" class="btn btn-auth">Visa karta</button>
+        </form>
       </div>
-      <div class="stats" id="stats" aria-live="polite">
-        <span id="stat-count">Laddar …</span>
-        <span id="stat-range">Period: 2025-10-01 – 2026-03-31</span>
-      </div>
-    </header>
+    </section>
 
-    <aside class="sidebar" aria-label="Kartkontroller">
-      <fieldset>
-        <legend>Kartlager</legend>
-        <label class="radio-row">
-          <input type="radio" name="baselayer" value="osm" checked />
-          OpenStreetMap
-        </label>
-        <label class="radio-row">
-          <input type="radio" name="baselayer" value="satellite" />
-          Satellit
-        </label>
-      </fieldset>
+    <div id="app-shell" class="app-shell hidden" aria-hidden="true">
+      <header class="topbar">
+        <div class="brand">
+          <p class="brand-title">Energiborrhål på karta</p>
+          <p class="subtitle">
+            Data från SGU:s Brunnsarkiv (öppna data, CC0). Projektnamnet «SBC» avser
+            här registerkällan för energibrunnar, inte SBC/Sveriges BostadsrättsCentrum.
+          </p>
+        </div>
+        <div class="stats" id="stats" aria-live="polite">
+          <span id="stat-count">Laddar …</span>
+          <span id="stat-range">Period: 2025-10-01 – 2026-03-31</span>
+        </div>
+      </header>
 
-      <div class="actions">
-        <button type="button" id="btn-reload" class="btn">Uppdatera data</button>
-      </div>
+      <aside class="sidebar" aria-label="Kartkontroller">
+        <fieldset>
+          <legend>Kartlager</legend>
+          <label class="radio-row">
+            <input type="radio" name="baselayer" value="osm" checked />
+            OpenStreetMap
+          </label>
+          <label class="radio-row">
+            <input type="radio" name="baselayer" value="satellite" />
+            Satellit
+          </label>
+        </fieldset>
 
-      <p class="hint" id="status-msg">Hämtar energibrunnar från SGU …</p>
-      <p class="hint small">
-        Klicka på en punkt för brunnsuppgifter. Kluster expanderas vid inzoomning.
-      </p>
-      <p class="hint small source">
-        Källa:
-        <a
-          href="https://www.sgu.se/produkter-och-tjanster/geologiska-data/brunnar--geologiska-data/brunnar/"
-          target="_blank"
-          rel="noopener noreferrer"
-          >SGU Brunnar</a
-        >
-      </p>
-    </aside>
+        <div class="actions">
+          <button type="button" id="btn-reload" class="btn">Uppdatera data</button>
+        </div>
 
-    <main id="map" role="application" aria-label="Karta över energibrunnar"></main>
+        <p class="hint" id="status-msg">Hämtar energibrunnar från SGU …</p>
+        <p class="hint small">
+          Klicka på en punkt för brunnsuppgifter. Kluster expanderas vid inzoomning.
+        </p>
+        <p class="hint small source">
+          Källa:
+          <a
+            href="https://www.sgu.se/produkter-och-tjanster/geologiska-data/brunnar--geologiska-data/brunnar/"
+            target="_blank"
+            rel="noopener noreferrer"
+            >SGU Brunnar</a
+          >
+        </p>
+      </aside>
+
+      <main id="map" role="application" aria-label="Karta över energibrunnar"></main>
+    </div>
 
     <script
       src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
@@ -75,6 +107,6 @@
       crossorigin=""
     ></script>
     <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
-    <script src="app.js" type="module"></script>
+    <script src="auth.js" type="module"></script>
   </body>
 </html>

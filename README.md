@@ -10,6 +10,14 @@ npm start
 
 Öppna **http://127.0.0.1:8080/**.
 
+## Åtkomst
+
+Lösenordsskydd i webbläsaren (`auth.js` + `auth-config.js`, SHA-256-hash). Sessionen gäller per flik tills den stängs.
+
 ## Teknik
 
-Statisk webbapp (HTML/CSS/JS + Leaflet). Ingen backend eller hemligheter; hämtar GeoJSON från `api.sgu.se`.
+Statisk webbapp (HTML/CSS/JS + Leaflet). Hämtar GeoJSON från `api.sgu.se`.
+
+## Publicera (GitHub Pages / Vercel)
+
+Se projektets `docs/sbc-karta-mobil.md` i Cursor-store eller GitHub wiki/instruktioner från koordinator.
