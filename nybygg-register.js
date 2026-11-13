@@ -12,6 +12,7 @@ import {
   PERMIT_DATE_FROM,
   PERMIT_DATE_TO,
   SPATIAL_BUFFER_METERS,
+  TEMPORAL_BUFFER_MONTHS,
 } from "./nybygg-register-config.js";
 
 const COMBIFY_RESIDENTIAL = "residential";
@@ -89,7 +90,92 @@ export function extractPermitRecord(permit) {
     procedure: String(procedure),
     decision_date:
       permit.decision_date ?? permit.decisionDate ?? permit.granted_at ?? null,
+    status_date:
+      permit.status_date ??
+      permit.statusDate ??
+      permit.meta?.status_date ??
+      null,
   };
+}
+
+/**
+ * @param {string | number | null | undefined} raw SGU borrdatum (ÅÅÅÅMMDD, ÅÅÅÅMM eller ÅÅÅÅ)
+ * @returns {Date | null}
+ */
+export function parseBorrdatumDate(raw) {
+  if (raw == null || raw === "") return null;
+  const s = String(raw).trim();
+  let y;
+  let m = 0;
+  let d = 1;
+  if (s.length >= 8) {
+    y = Number(s.slice(0, 4));
+    m = Number(s.slice(4, 6)) - 1;
+    d = Number(s.slice(6, 8));
+  } else if (s.length >= 6) {
+    y = Number(s.slice(0, 4));
+    m = Number(s.slice(4, 6)) - 1;
+  } else if (s.length >= 4) {
+    y = Number(s.slice(0, 4));
+  } else {
+    return null;
+  }
+  if (!Number.isFinite(y)) return null;
+  const dt = new Date(Date.UTC(y, m, d));
+  return Number.isNaN(dt.getTime()) ? null : dt;
+}
+
+/**
+ * @param {ReturnType<typeof extractPermitRecord>} permit
+ * @returns {Date | null}
+ */
+export function parseRegisterEventDate(permit) {
+  const raw =
+    permit.decision_date ?? permit.status_date ?? permit.granted_at ?? null;
+  if (!raw) return null;
+  const s = String(raw).trim();
+  const iso = s.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (iso) {
+    const dt = new Date(
+      Date.UTC(Number(iso[1]), Number(iso[2]) - 1, Number(iso[3]))
+    );
+    return Number.isNaN(dt.getTime()) ? null : dt;
+  }
+  if (/^\d{8}$/.test(s)) {
+    return parseBorrdatumDate(s);
+  }
+  return null;
+}
+
+/**
+ * @param {Date} date
+ * @param {number} months
+ */
+function subtractCalendarMonthsUtc(date, months) {
+  const d = new Date(date.getTime());
+  d.setUTCMonth(d.getUTCMonth() - months);
+  return d;
+}
+
+/**
+ * Plan/lovdatum ska ligga i [borrdatum − N mån, borrdatum] (inkl.).
+ * Saknas registerdatum eller borrdatum tillämpas ingen tidsfilter.
+ * @param {ReturnType<typeof extractPermitRecord>} permit
+ * @param {string | number | null | undefined} borrdatumRaw
+ * @param {number} [bufferMonths]
+ */
+export function registerEventWithinTemporalBuffer(
+  permit,
+  borrdatumRaw,
+  bufferMonths = TEMPORAL_BUFFER_MONTHS
+) {
+  const eventDate = parseRegisterEventDate(permit);
+  if (!eventDate) return true;
+  const boreDate = parseBorrdatumDate(borrdatumRaw);
+  if (!boreDate) return true;
+  const earliest = subtractCalendarMonthsUtc(boreDate, bufferMonths);
+  const t = eventDate.getTime();
+  return t <= boreDate.getTime() && t >= earliest.getTime();
 }
 
 /**
@@ -244,7 +330,8 @@ export async function fetchCombifyPermits(apiKey, options = {}) {
  * @param {ReturnType<typeof extractPermitRecord>[]} permits
  */
 export function buildPermitIndex(permits) {
-  const propertyKeys = new Set();
+  /** @type {Map<string, ReturnType<typeof extractPermitRecord>[]>} */
+  const byProperty = new Map();
   const points = [];
   for (const p of permits) {
     if (!p.labels.length || p.labels.includes(COMBIFY_RESIDENTIAL)) {
@@ -261,7 +348,11 @@ export function buildPermitIndex(permits) {
       p.source === "demo";
     if (!isResidential || !isNew) continue;
 
-    if (p.property_key) propertyKeys.add(p.property_key);
+    if (p.property_key) {
+      const list = byProperty.get(p.property_key) ?? [];
+      list.push(p);
+      byProperty.set(p.property_key, list);
+    }
     if (
       p.latitude != null &&
       p.longitude != null &&
@@ -271,28 +362,38 @@ export function buildPermitIndex(permits) {
       points.push(p);
     }
   }
-  return { propertyKeys, points };
+  const propertyKeys = new Set(byProperty.keys());
+  return { propertyKeys, byProperty, points };
 }
 
 /**
  * @param {object} feature SGU GeoJSON
  * @param {ReturnType<typeof buildPermitIndex>} index
- * @param {{ bufferM?: number, requireMunicipalityMatch?: boolean }} [options]
+ * @param {{ bufferM?: number, temporalBufferMonths?: number, requireMunicipalityMatch?: boolean }} [options]
  */
 export function featureMatchesNybyggRegister(feature, index, options = {}) {
   const bufferM = options.bufferM ?? SPATIAL_BUFFER_METERS;
+  const temporalMonths = options.temporalBufferMonths ?? TEMPORAL_BUFFER_MONTHS;
   const props = feature.properties ?? {};
+  const borrdatum = props.borrdatum;
   const propKey = normalizePropertyDesignation(props.fastighet);
   const kommun = String(props.kommunnamn ?? "")
     .trim()
     .toUpperCase();
 
-  if (propKey && index.propertyKeys.has(propKey)) {
-    if (!options.requireMunicipalityMatch) return true;
-    const sameKommun = index.points.some(
-      (p) => p.property_key === propKey && (!p.municipality || p.municipality === kommun)
-    );
-    if (sameKommun) return true;
+  const temporalOk = (p) =>
+    registerEventWithinTemporalBuffer(p, borrdatum, temporalMonths);
+
+  const municipalityOk = (p) =>
+    !options.requireMunicipalityMatch ||
+    !p.municipality ||
+    p.municipality === kommun;
+
+  if (propKey && index.byProperty?.has(propKey)) {
+    const candidates = index.byProperty.get(propKey) ?? [];
+    if (candidates.some((p) => municipalityOk(p) && temporalOk(p))) {
+      return true;
+    }
   }
 
   const coords = feature.geometry?.coordinates;
@@ -300,11 +401,9 @@ export function featureMatchesNybyggRegister(feature, index, options = {}) {
   const [lon, lat] = coords;
 
   for (const p of index.points) {
-    if (options.requireMunicipalityMatch && p.municipality && p.municipality !== kommun) {
-      continue;
-    }
+    if (!municipalityOk(p)) continue;
     const d = haversineMeters(lat, lon, p.latitude, p.longitude);
-    if (d <= bufferM) return true;
+    if (d <= bufferM && temporalOk(p)) return true;
   }
   return false;
 }

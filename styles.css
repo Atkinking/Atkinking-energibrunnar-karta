@@ -153,6 +153,14 @@ body {
   box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
 }
 
+.sidebar-toggle {
+  display: none;
+}
+
+.sidebar-panel {
+  display: block;
+}
+
 fieldset {
   margin: 0 0 0.75rem;
   padding: 0.5rem 0.65rem;
@@ -334,15 +342,133 @@ legend {
 }
 
 @media (max-width: 640px) {
+  .topbar {
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.45rem 0.65rem;
+  }
+
+  .brand {
+    min-width: 0;
+    flex: 1 1 auto;
+  }
+
+  .brand-title {
+    font-size: 1rem;
+    line-height: 1.2;
+  }
+
+  .subtitle {
+    display: none;
+  }
+
+  .stats {
+    flex-shrink: 0;
+    align-items: flex-end;
+    font-size: 0.72rem;
+    line-height: 1.25;
+  }
+
+  #stat-range {
+    display: none;
+  }
+
+  #map {
+    top: 2.85rem;
+    bottom: calc(3rem + env(safe-area-inset-bottom, 0px));
+  }
+
+  .app-shell.sidebar-expanded #map {
+    bottom: calc(3rem + 38vh + env(safe-area-inset-bottom, 0px));
+  }
+
   .sidebar {
     top: auto;
-    bottom: 0.75rem;
-    left: 0.5rem;
-    right: 0.5rem;
+    bottom: 0;
+    left: 0;
+    right: 0;
     width: auto;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    border-radius: 0.65rem 0.65rem 0 0;
+    border-bottom: none;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .sidebar-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    width: 100%;
+    min-height: 3rem;
+    margin: 0;
+    padding: 0 1rem;
+    border: none;
+    border-bottom: 1px solid #e2e8f0;
+    border-radius: 0.65rem 0.65rem 0 0;
+    background: rgba(255, 255, 255, 0.98);
+    color: #0f172a;
+    font-size: 0.95rem;
+    font-weight: 650;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  .sidebar-toggle:focus-visible {
+    outline: 2px solid #0369a1;
+    outline-offset: -2px;
+  }
+
+  .sidebar-chevron {
+    width: 0.55rem;
+    height: 0.55rem;
+    border-right: 2px solid #475569;
+    border-bottom: 2px solid #475569;
+    transform: rotate(45deg);
+    transition: transform 0.2s ease;
+    margin-top: -0.15rem;
+  }
+
+  .sidebar[data-mobile-collapsed="false"] .sidebar-chevron {
+    transform: rotate(-135deg);
+    margin-top: 0.2rem;
+  }
+
+  .sidebar-panel {
+    display: none;
+    max-height: 38vh;
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 0.65rem 0.85rem 0.75rem;
+  }
+
+  .sidebar[data-mobile-collapsed="false"] .sidebar-panel {
+    display: block;
   }
 
   .leaflet-top.leaflet-left {
-    margin-top: 5rem;
+    margin-top: 0.35rem;
+    margin-left: 0.35rem;
+  }
+
+  .leaflet-top.leaflet-right {
+    margin-top: 0.35rem;
+    margin-right: 0.35rem;
+  }
+
+  .leaflet-bottom.leaflet-right {
+    margin-bottom: 0.35rem;
+  }
+}
+
+@media (min-width: 641px) {
+  #sidebar-panel[hidden] {
+    display: block !important;
   }
 }

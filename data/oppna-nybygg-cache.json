@@ -6,6 +6,7 @@
       "STOCKHOLM"
     ],
     "spatial_buffer_m": 50,
+    "temporal_buffer_months": 4,
     "harvested_at": "2026-11-13T21:36:14Z",
     "sources": [
       {

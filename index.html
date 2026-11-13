@@ -60,7 +60,8 @@
             här registerkällan för energibrunnar, inte SBC/Sveriges BostadsrättsCentrum.
             Nybyggda bostäder filtreras via externt register (öppen Stockholm-cache, demoläge eller Combify),
             inte via fritext i Brunnsarkivet. Spatial buffer cirka 50 m och matchning på
-            fastighetsbeteckning mot SGU-fältet <code>fastighet</code>.
+            fastighetsbeteckning mot SGU-fältet <code>fastighet</code>, samt tidsfönster
+            (plan/lov högst 4 månader före borrdatum när datum finns).
           </p>
         </div>
         <div class="stats" id="stats" aria-live="polite">
@@ -69,7 +70,23 @@
         </div>
       </header>
 
-      <aside class="sidebar" aria-label="Kartkontroller">
+      <aside
+        id="sidebar"
+        class="sidebar"
+        aria-label="Kartkontroller"
+        data-mobile-collapsed="true"
+      >
+        <button
+          type="button"
+          id="sidebar-toggle"
+          class="sidebar-toggle"
+          aria-expanded="false"
+          aria-controls="sidebar-panel"
+        >
+          <span class="sidebar-toggle-label">Inställningar</span>
+          <span class="sidebar-chevron" aria-hidden="true"></span>
+        </button>
+        <div id="sidebar-panel" class="sidebar-panel" hidden>
         <fieldset>
           <legend>Kartlager</legend>
           <label class="radio-row">
@@ -145,6 +162,7 @@
             >SGU Brunnar</a
           >
         </p>
+        </div>
       </aside>
 
       <main id="map" role="application" aria-label="Karta över energibrunnar"></main>

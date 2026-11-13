@@ -28,6 +28,12 @@ export const DEFAULT_COMBIFY_BASE = COMBIFY_API_BASES.sandbox;
 /** Buffer runt nybyggnadslov / brunn vid spatial join (meter). */
 export const SPATIAL_BUFFER_METERS = 50;
 
+/**
+ * Registerhändelse (detaljplan, bygglov) får ligga högst så här många kalendermånader
+ * före borrdatum. Borr kan ske 3–5 mån efter plan/lov; standard 4 mån (mitten i intervallet).
+ */
+export const TEMPORAL_BUFFER_MONTHS = 4;
+
 /** Projektperiod – filtrerar Combify-hämtning. */
 export const PERMIT_DATE_FROM = "2025-10-01";
 export const PERMIT_DATE_TO = "2026-03-31";

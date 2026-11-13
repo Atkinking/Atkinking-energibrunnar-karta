@@ -17,6 +17,7 @@ import {
   DEFAULT_REGISTER_MODE,
   NYBYGG_REGISTER_MODES,
   SPATIAL_BUFFER_METERS,
+  TEMPORAL_BUFFER_MONTHS,
 } from "./nybygg-register-config.js";
 
 const DATE_FROM = "20251001";
@@ -251,12 +252,15 @@ async function rebuildRegisterJoin(features) {
     const { ids, matchDetails } = computeRegisterMatchedBrunnsIds(
       features,
       loaded.permits,
-      { bufferM: SPATIAL_BUFFER_METERS }
+      {
+        bufferM: SPATIAL_BUFFER_METERS,
+        temporalBufferMonths: TEMPORAL_BUFFER_MONTHS,
+      }
     );
     setRegisterMatchedBrunnsIds(ids);
     const matchN = matchDetails.length;
     setRegisterStatus(
-      `${loaded.label}. Registerjoin: ${matchN} brunnar inom ${SPATIAL_BUFFER_METERS} m eller samma fastighetsbeteckning.`,
+      `${loaded.label}. Registerjoin: ${matchN} brunnar (≤${SPATIAL_BUFFER_METERS} m eller fastighet, plan/lov högst ${TEMPORAL_BUFFER_MONTHS} mån före borrning).`,
       "ok"
     );
   } catch (err) {
@@ -359,4 +363,44 @@ if (storedKey && combifyKeyInput) {
 }
 
 btnReload.addEventListener("click", () => loadData());
+
+const MOBILE_MAX_WIDTH = 640;
+const sidebarEl = document.getElementById("sidebar");
+const sidebarToggle = document.getElementById("sidebar-toggle");
+const sidebarPanel = document.getElementById("sidebar-panel");
+const appShell = document.getElementById("app-shell");
+
+function isMobileLayout() {
+  return window.matchMedia(`(max-width: ${MOBILE_MAX_WIDTH}px)`).matches;
+}
+
+function setMobileSidebarCollapsed(collapsed) {
+  if (!sidebarEl || !sidebarToggle || !sidebarPanel) return;
+  const on = isMobileLayout();
+  if (!on) {
+    sidebarEl.dataset.mobileCollapsed = "false";
+    sidebarToggle.setAttribute("aria-expanded", "true");
+    sidebarPanel.hidden = false;
+    appShell?.classList.remove("sidebar-expanded");
+    return;
+  }
+  sidebarEl.dataset.mobileCollapsed = collapsed ? "true" : "false";
+  sidebarToggle.setAttribute("aria-expanded", collapsed ? "false" : "true");
+  sidebarPanel.hidden = collapsed;
+  appShell?.classList.toggle("sidebar-expanded", !collapsed);
+}
+
+function initMobileSidebar() {
+  setMobileSidebarCollapsed(true);
+  sidebarToggle?.addEventListener("click", () => {
+    if (!isMobileLayout()) return;
+    const collapsed = sidebarEl?.dataset.mobileCollapsed !== "false";
+    setMobileSidebarCollapsed(!collapsed);
+  });
+  window
+    .matchMedia(`(max-width: ${MOBILE_MAX_WIDTH}px)`)
+    .addEventListener("change", () => setMobileSidebarCollapsed(true));
+}
+
+initMobileSidebar();
 loadData();
