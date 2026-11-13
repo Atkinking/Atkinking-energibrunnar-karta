@@ -388,6 +388,7 @@ legend {
     bottom: 0;
     left: 0;
     right: 0;
+    z-index: 2500;
     width: auto;
     max-width: none;
     margin: 0;
@@ -397,6 +398,7 @@ legend {
     padding-bottom: env(safe-area-inset-bottom, 0px);
     display: flex;
     flex-direction: column;
+    pointer-events: auto;
   }
 
   .sidebar-toggle {
@@ -406,6 +408,8 @@ legend {
     gap: 0.5rem;
     width: 100%;
     min-height: 3rem;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: rgba(3, 105, 161, 0.18);
     margin: 0;
     padding: 0 1rem;
     border: none;
@@ -465,10 +469,9 @@ legend {
   .leaflet-bottom.leaflet-right {
     margin-bottom: 0.35rem;
   }
-}
 
-@media (min-width: 641px) {
-  #sidebar-panel[hidden] {
-    display: block !important;
+  #map {
+    z-index: 0;
+    pointer-events: auto;
   }
 }

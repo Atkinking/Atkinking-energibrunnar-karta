@@ -19,7 +19,7 @@ async function unlockApp() {
   gate.setAttribute("aria-hidden", "true");
   shell.classList.remove("hidden");
   shell.removeAttribute("aria-hidden");
-  await import("./app.js");
+  await import("./app.js?v=10");
 }
 
 function hasSession() {

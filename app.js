@@ -380,23 +380,45 @@ function setMobileSidebarCollapsed(collapsed) {
   if (!on) {
     sidebarEl.dataset.mobileCollapsed = "false";
     sidebarToggle.setAttribute("aria-expanded", "true");
-    sidebarPanel.hidden = false;
     appShell?.classList.remove("sidebar-expanded");
     return;
   }
   sidebarEl.dataset.mobileCollapsed = collapsed ? "true" : "false";
   sidebarToggle.setAttribute("aria-expanded", collapsed ? "false" : "true");
-  sidebarPanel.hidden = collapsed;
   appShell?.classList.toggle("sidebar-expanded", !collapsed);
+  if (!collapsed) {
+    window.requestAnimationFrame(() => {
+      map.invalidateSize();
+    });
+  }
+}
+
+function toggleMobileSidebar() {
+  if (!isMobileLayout()) return;
+  const collapsed = sidebarEl?.dataset.mobileCollapsed !== "false";
+  setMobileSidebarCollapsed(!collapsed);
 }
 
 function initMobileSidebar() {
   setMobileSidebarCollapsed(true);
-  sidebarToggle?.addEventListener("click", () => {
-    if (!isMobileLayout()) return;
-    const collapsed = sidebarEl?.dataset.mobileCollapsed !== "false";
-    setMobileSidebarCollapsed(!collapsed);
+  if (!sidebarToggle) return;
+
+  let toggleLock = false;
+  const onToggle = (event) => {
+    event.preventDefault();
+    if (toggleLock) return;
+    toggleLock = true;
+    toggleMobileSidebar();
+    window.setTimeout(() => {
+      toggleLock = false;
+    }, 350);
+  };
+
+  sidebarToggle.addEventListener("click", onToggle);
+  sidebarToggle.addEventListener("pointerup", (event) => {
+    if (event.pointerType === "touch") onToggle(event);
   });
+
   window
     .matchMedia(`(max-width: ${MOBILE_MAX_WIDTH}px)`)
     .addEventListener("change", () => setMobileSidebarCollapsed(true));

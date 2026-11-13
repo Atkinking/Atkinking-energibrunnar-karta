@@ -18,7 +18,7 @@
       rel="stylesheet"
       href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css"
     />
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="styles.css?v=10" />
   </head>
   <body>
     <h1 class="visually-hidden">Energiborrhål på karta</h1>
@@ -70,6 +70,8 @@
         </div>
       </header>
 
+      <main id="map" role="application" aria-label="Karta över energibrunnar"></main>
+
       <aside
         id="sidebar"
         class="sidebar"
@@ -86,7 +88,7 @@
           <span class="sidebar-toggle-label">Inställningar</span>
           <span class="sidebar-chevron" aria-hidden="true"></span>
         </button>
-        <div id="sidebar-panel" class="sidebar-panel" hidden>
+        <div id="sidebar-panel" class="sidebar-panel">
         <fieldset>
           <legend>Kartlager</legend>
           <label class="radio-row">
@@ -164,8 +166,6 @@
         </p>
         </div>
       </aside>
-
-      <main id="map" role="application" aria-label="Karta över energibrunnar"></main>
     </div>
 
     <script
@@ -174,6 +174,6 @@
       crossorigin=""
     ></script>
     <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
-    <script src="auth.js" type="module"></script>
+    <script src="auth.js?v=10" type="module"></script>
   </body>
 </html>
