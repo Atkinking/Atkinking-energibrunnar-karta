@@ -1,6 +1,7 @@
 {
   "meta": {
     "description": "Bundlad öppen cache från Stockholms stads Bygg- och plantjänst (pågående detaljplaner med bostadsinnehåll). Ersätter inte ByggR/Combify bygglovsregister; ingen inloggning krävs.",
+    "source_type": "detail_plan",
     "scope": "Stockholms stad (kommun 0180)",
     "municipalities": [
       "STOCKHOLM"
@@ -41,7 +42,7 @@
     {
       "id": "stockholm-plan-2017-02604",
       "source": "stockholm_stad_bygg_plantjanst",
-      "procedure": "new_building",
+      "procedure": "detail_plan",
       "labels": [
         "residential"
       ],
@@ -62,7 +63,7 @@
     {
       "id": "stockholm-plan-2021-08302",
       "source": "stockholm_stad_bygg_plantjanst",
-      "procedure": "new_building",
+      "procedure": "detail_plan",
       "labels": [
         "residential"
       ],
@@ -83,7 +84,7 @@
     {
       "id": "stockholm-plan-2022-15055",
       "source": "stockholm_stad_bygg_plantjanst",
-      "procedure": "new_building",
+      "procedure": "detail_plan",
       "labels": [
         "residential"
       ],
@@ -104,7 +105,7 @@
     {
       "id": "stockholm-plan-2024-04042",
       "source": "stockholm_stad_bygg_plantjanst",
-      "procedure": "new_building",
+      "procedure": "detail_plan",
       "labels": [
         "residential"
       ],
@@ -125,7 +126,7 @@
     {
       "id": "stockholm-plan-2024-13114",
       "source": "stockholm_stad_bygg_plantjanst",
-      "procedure": "new_building",
+      "procedure": "detail_plan",
       "labels": [
         "residential"
       ],
@@ -146,7 +147,7 @@
     {
       "id": "stockholm-plan-2025-14511",
       "source": "stockholm_stad_bygg_plantjanst",
-      "procedure": "new_building",
+      "procedure": "detail_plan",
       "labels": [
         "residential"
       ],
@@ -167,7 +168,7 @@
     {
       "id": "stockholm-plan-2025-16283",
       "source": "stockholm_stad_bygg_plantjanst",
-      "procedure": "new_building",
+      "procedure": "detail_plan",
       "labels": [
         "residential"
       ],
@@ -188,7 +189,7 @@
     {
       "id": "stockholm-plan-2025-16308",
       "source": "stockholm_stad_bygg_plantjanst",
-      "procedure": "new_building",
+      "procedure": "detail_plan",
       "labels": [
         "residential"
       ],

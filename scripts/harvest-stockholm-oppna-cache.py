@@ -231,7 +231,7 @@ def main() -> None:
             {
                 "id": f"stockholm-plan-{r.journal_id}",
                 "source": "stockholm_stad_bygg_plantjanst",
-                "procedure": "new_building",
+                "procedure": "detail_plan",
                 "labels": labels,
                 "property_designation": r.property_designation or None,
                 "municipality": "STOCKHOLM",
@@ -256,6 +256,7 @@ def main() -> None:
                 "(pågående detaljplaner med bostadsinnehåll). Ersätter inte ByggR/Combify "
                 "bygglovsregister; ingen inloggning krävs."
             ),
+            "source_type": "detail_plan",
             "scope": "Stockholms stad (kommun 0180)",
             "municipalities": ["STOCKHOLM"],
             "spatial_buffer_m": 50,

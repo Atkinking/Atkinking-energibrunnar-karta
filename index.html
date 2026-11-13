@@ -18,7 +18,7 @@
       rel="stylesheet"
       href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css"
     />
-    <link rel="stylesheet" href="styles.css?v=10" />
+    <link rel="stylesheet" href="styles.css?v=11" />
   </head>
   <body>
     <h1 class="visually-hidden">Energiborrhål på karta</h1>
@@ -58,10 +58,12 @@
           <p class="subtitle">
             Data från SGU:s Brunnsarkiv (öppna data, CC0). Projektnamnet «SBC» avser
             här registerkällan för energibrunnar, inte SBC/Sveriges BostadsrättsCentrum.
-            Nybyggda bostäder filtreras via externt register (öppen Stockholm-cache, demoläge eller Combify),
-            inte via fritext i Brunnsarkivet. Spatial buffer cirka 50 m och matchning på
-            fastighetsbeteckning mot SGU-fältet <code>fastighet</code>, samt tidsfönster
-            (plan/lov högst 4 månader före borrdatum när datum finns).
+            Nybyggda bostäder filtreras via externt register: Stockholms öppna
+            <strong>detaljplan</strong>-cache, demoläge eller Combify
+            <strong>bygglov</strong> – inte via fritext i Brunnsarkivet. Spatial buffer
+            cirka 50 m och matchning på fastighetsbeteckning mot SGU-fältet
+            <code>fastighet</code>, samt tidsfönster (detaljplan/bygglov högst 4 månader före
+            borrdatum när datum finns).
           </p>
         </div>
         <div class="stats" id="stats" aria-live="polite">
@@ -102,15 +104,15 @@
         </fieldset>
 
         <fieldset>
-          <legend>Nybyggda bostäder</legend>
+          <legend>Nybyggda bostäder (detaljplan / bygglov)</legend>
           <label class="check-row">
             <input type="checkbox" id="filter-nybygg-register" />
-            Visa endast med match i nybyggregister
+            Visa endast med register-match
           </label>
           <label class="select-row" for="register-mode">
             Registerkälla
             <select id="register-mode" name="register-mode">
-              <option value="oppna-cache" selected>Öppen cache – Stockholm stad</option>
+              <option value="oppna-cache" selected>Öppen cache – Stockholm stad (detaljplan)</option>
               <option value="demo">Demodata (Falkenberg, Torsby, Värnamo)</option>
               <option value="combify">Combify API (nyckel krävs)</option>
               <option value="url">Egen JSON-URL</option>
@@ -140,10 +142,10 @@
             Laddar register …
           </p>
           <p class="hint small filter-note">
-            Combify sandbox/produktion använder
+            Stockholm (gratis): pågående <strong>detaljplaner</strong> med bostadsinnehåll – inte
+            bygglov. Combify (bygglov): sandbox/produktion använder
             <code>GET /v1/permits?labels=residential&amp;procedure=new_building</code>.
-            Gratisläge: «Öppen cache – Stockholm stad» (ingen nyckel). Hemlighet för serverproxy:
-            <code>COMBIFY_API_KEY</code> (se plan).
+            Hemlighet för serverproxy: <code>COMBIFY_API_KEY</code> (se plan).
           </p>
         </fieldset>
 
@@ -174,6 +176,6 @@
       crossorigin=""
     ></script>
     <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
-    <script src="auth.js?v=10" type="module"></script>
+    <script src="auth.js?v=11" type="module"></script>
   </body>
 </html>

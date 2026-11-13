@@ -49,14 +49,26 @@ const map = L.map("map", {
   layers: [osmLayer],
 });
 
+const CLUSTER_DISABLE_ZOOM = 16;
+
 const clusterGroup = L.markerClusterGroup({
   chunkedLoading: true,
+  chunkDelay: 50,
   maxClusterRadius: 50,
   spiderfyOnMaxZoom: true,
   showCoverageOnHover: false,
+  removeOutsideVisibleBounds: false,
+  disableClusteringAtZoom: CLUSTER_DISABLE_ZOOM,
+  animateAddingMarkers: false,
+  zoomToBoundsOnClick: true,
 });
 
 map.addLayer(clusterGroup);
+
+const markerPane = map.getPane("markerPane");
+if (markerPane) {
+  markerPane.style.zIndex = "650";
+}
 
 L.control.scale({ imperial: false, metric: true }).addTo(map);
 
@@ -136,6 +148,23 @@ function setRegisterStatus(text, variant = "info") {
   if (!registerStatus) return;
   registerStatus.textContent = text;
   registerStatus.dataset.variant = variant;
+}
+
+function registerTemporalKind(source) {
+  if (source === NYBYGG_REGISTER_MODES.oppnaCache) return "detaljplan";
+  if (source === "combify") return "bygglov";
+  return "plan/lov";
+}
+
+function scheduleMapClusterRefresh() {
+  window.requestAnimationFrame(() => {
+    map.invalidateSize({ animate: false, pan: false });
+    window.requestAnimationFrame(() => {
+      if (typeof clusterGroup.refreshClusters === "function") {
+        clusterGroup.refreshClusters();
+      }
+    });
+  });
 }
 
 function formatBorrdatum(raw) {
@@ -259,9 +288,10 @@ async function rebuildRegisterJoin(features) {
     );
     setRegisterMatchedBrunnsIds(ids);
     const matchN = matchDetails.length;
+    const temporalKind = registerTemporalKind(loaded.source);
     setRegisterStatus(
-      `${loaded.label}. Registerjoin: ${matchN} brunnar (≤${SPATIAL_BUFFER_METERS} m eller fastighet, plan/lov högst ${TEMPORAL_BUFFER_MONTHS} mån före borrning).`,
-      "ok"
+      `${loaded.label}. Registerjoin: ${matchN} brunnar (≤${SPATIAL_BUFFER_METERS} m eller fastighet, ${temporalKind} högst ${TEMPORAL_BUFFER_MONTHS} mån före borrning).`,
+      matchN > 0 ? "ok" : "error"
     );
   } catch (err) {
     console.error(err);
@@ -297,15 +327,33 @@ function renderFeatures(features, { fitBounds = false } = {}) {
   }
 }
 
+function describeEmptyRegisterFilter() {
+  const mode = registerModeSelect?.value ?? DEFAULT_REGISTER_MODE;
+  if (mode === NYBYGG_REGISTER_MODES.oppnaCache) {
+    return "Inga träffar mot Stockholms detaljplaner i perioden – 0 punkter på kartan.";
+  }
+  if (mode === NYBYGG_REGISTER_MODES.combify) {
+    return "Inga bygglovsträffar (Combify) – kontrollera nyckel eller demoläge.";
+  }
+  return "Inga registerträffar – prova demoläge eller annan registerkälla.";
+}
+
 function applyClientFilters({ fitBounds = false } = {}) {
   const opts = getFilterOptions();
   if (opts.onlyNybyggRegister && !hasRegisterMatches()) {
-    statCount.textContent =
-      "Inga registerträffar – aktivera demoläge eller ange Combify-nyckel";
+    const emptyMsg = describeEmptyRegisterFilter();
+    statCount.textContent = emptyMsg;
+    statusMsg.textContent = emptyMsg;
+    clusterGroup.clearLayers();
+    return;
   }
   const filtered = filterFeaturesForMap(allFeatures, opts);
   renderFeatures(filtered, { fitBounds });
   updateStatCount(filtered.length, allFeatures.length);
+  if (opts.onlyNybyggRegister && filtered.length === 0 && hasRegisterMatches()) {
+    statusMsg.textContent =
+      "Registerträffar finns men inga energibrunnar i perioden matchar filtret.";
+  }
 }
 
 async function loadData() {
@@ -332,7 +380,12 @@ async function loadData() {
   }
 }
 
-filterNybyggRegister?.addEventListener("change", () => {
+filterNybyggRegister?.addEventListener("change", (event) => {
+  if (event.target?.checked && !hasRegisterMatches()) {
+    const emptyMsg = describeEmptyRegisterFilter();
+    setRegisterStatus(emptyMsg, "error");
+    statusMsg.textContent = emptyMsg;
+  }
   applyClientFilters({ fitBounds: !hasFittedBounds });
 });
 
@@ -386,11 +439,7 @@ function setMobileSidebarCollapsed(collapsed) {
   sidebarEl.dataset.mobileCollapsed = collapsed ? "true" : "false";
   sidebarToggle.setAttribute("aria-expanded", collapsed ? "false" : "true");
   appShell?.classList.toggle("sidebar-expanded", !collapsed);
-  if (!collapsed) {
-    window.requestAnimationFrame(() => {
-      map.invalidateSize();
-    });
-  }
+  scheduleMapClusterRefresh();
 }
 
 function toggleMobileSidebar() {
@@ -421,8 +470,17 @@ function initMobileSidebar() {
 
   window
     .matchMedia(`(max-width: ${MOBILE_MAX_WIDTH}px)`)
-    .addEventListener("change", () => setMobileSidebarCollapsed(true));
+    .addEventListener("change", () => {
+      setMobileSidebarCollapsed(true);
+      scheduleMapClusterRefresh();
+    });
 }
+
+map.on("zoomend", () => {
+  if (isMobileLayout() && typeof clusterGroup.refreshClusters === "function") {
+    clusterGroup.refreshClusters();
+  }
+});
 
 initMobileSidebar();
 loadData();

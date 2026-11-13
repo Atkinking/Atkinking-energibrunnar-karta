@@ -11,12 +11,14 @@ import {
   OPNA_CACHE_URL,
   PERMIT_DATE_FROM,
   PERMIT_DATE_TO,
+  REGISTER_PROCEDURE_BUILDING,
+  REGISTER_PROCEDURE_DETAIL_PLAN,
   SPATIAL_BUFFER_METERS,
   TEMPORAL_BUFFER_MONTHS,
 } from "./nybygg-register-config.js";
 
 const COMBIFY_RESIDENTIAL = "residential";
-const COMBIFY_NEW_BUILDING = "new_building";
+const COMBIFY_NEW_BUILDING = REGISTER_PROCEDURE_BUILDING;
 
 /**
  * Normaliserar svensk fastighetsbeteckning för jämförelse (SGU ↔ register).
@@ -231,7 +233,7 @@ export async function loadOppnaCacheRegister() {
   return {
     ...result,
     source: "oppna-cache",
-    label: `Öppen cache – Stockholm stad (${result.permits.length} bostadsplaner, ${muni})`,
+    label: `Öppen cache – Stockholm stad (${result.permits.length} detaljplaner m. bostad, ${muni})`,
   };
 }
 
@@ -345,7 +347,9 @@ export function buildPermitIndex(permits) {
     const isNew =
       !p.procedure ||
       p.procedure === COMBIFY_NEW_BUILDING ||
-      p.source === "demo";
+      p.procedure === REGISTER_PROCEDURE_DETAIL_PLAN ||
+      p.source === "demo" ||
+      p.source === "stockholm_stad_bygg_plantjanst";
     if (!isResidential || !isNew) continue;
 
     if (p.property_key) {

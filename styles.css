@@ -470,6 +470,14 @@ legend {
     margin-bottom: 0.35rem;
   }
 
+  .leaflet-marker-pane {
+    z-index: 650;
+  }
+
+  .marker-cluster {
+    z-index: 660;
+  }
+
   #map {
     z-index: 0;
     pointer-events: auto;

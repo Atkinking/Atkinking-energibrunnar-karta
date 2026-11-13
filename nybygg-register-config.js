@@ -3,6 +3,12 @@
  * Combify kräver API-nyckel även i sandbox (x-api-key).
  */
 
+/** Normaliserad procedure för Combify bygglov. */
+export const REGISTER_PROCEDURE_BUILDING = "new_building";
+
+/** Normaliserad procedure för Stockholms öppna detaljplan-cache. */
+export const REGISTER_PROCEDURE_DETAIL_PLAN = "detail_plan";
+
 export const NYBYGG_REGISTER_MODES = {
   oppnaCache: "oppna-cache",
   demo: "demo",
