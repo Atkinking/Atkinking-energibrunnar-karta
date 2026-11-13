@@ -1,0 +1,170 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  color: #0f172a;
+  background: #f1f5f9;
+}
+
+.topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.65rem 1rem;
+  background: rgba(255, 255, 255, 0.96);
+  border-bottom: 1px solid #cbd5e1;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
+}
+
+.brand h1 {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 650;
+}
+
+.subtitle {
+  margin: 0.2rem 0 0;
+  font-size: 0.78rem;
+  color: #475569;
+  max-width: 52rem;
+  line-height: 1.35;
+}
+
+.stats {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.15rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #0369a1;
+}
+
+.sidebar {
+  position: fixed;
+  top: 5.5rem;
+  left: 0.75rem;
+  z-index: 1000;
+  width: 17rem;
+  max-width: calc(100vw - 1.5rem);
+  padding: 0.85rem;
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid #cbd5e1;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
+}
+
+fieldset {
+  margin: 0 0 0.75rem;
+  padding: 0.5rem 0.65rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.4rem;
+}
+
+legend {
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0 0.25rem;
+}
+
+.radio-row {
+  display: block;
+  margin: 0.35rem 0;
+  font-size: 0.88rem;
+  cursor: pointer;
+}
+
+.btn {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: none;
+  border-radius: 0.35rem;
+  background: #0369a1;
+  color: #fff;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn:hover {
+  background: #075985;
+}
+
+.hint {
+  margin: 0.5rem 0 0;
+  font-size: 0.8rem;
+  color: #64748b;
+  line-height: 1.4;
+}
+
+.hint.small {
+  font-size: 0.72rem;
+}
+
+.hint.source a {
+  color: #0369a1;
+}
+
+#map {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+}
+
+.leaflet-top.leaflet-left {
+  margin-top: 6.5rem;
+}
+
+.popup-title {
+  margin: 0 0 0.35rem;
+  font-size: 1rem;
+  font-weight: 650;
+}
+
+.popup-table {
+  margin: 0;
+  font-size: 0.8rem;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.popup-table th {
+  text-align: left;
+  padding: 0.15rem 0.5rem 0.15rem 0;
+  color: #64748b;
+  font-weight: 500;
+  vertical-align: top;
+  white-space: nowrap;
+}
+
+.popup-table td {
+  padding: 0.15rem 0;
+}
+
+@media (max-width: 640px) {
+  .sidebar {
+    top: auto;
+    bottom: 0.75rem;
+    left: 0.5rem;
+    right: 0.5rem;
+    width: auto;
+  }
+
+  .leaflet-top.leaflet-left {
+    margin-top: 5rem;
+  }
+}

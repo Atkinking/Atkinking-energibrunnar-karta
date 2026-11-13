@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="sv">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Energiborrhål – SGU Brunnsarkiv</title>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin=""
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand">
+        <h1>Energiborrhål på karta</h1>
+        <p class="subtitle">
+          Data från SGU:s Brunnsarkiv (öppna data, CC0). Projektnamnet «SBC» avser
+          här registerkällan för energibrunnar, inte SBC/Sveriges BostadsrättsCentrum.
+        </p>
+      </div>
+      <div class="stats" id="stats" aria-live="polite">
+        <span id="stat-count">Laddar …</span>
+        <span id="stat-range">Period: 2025-10-01 – 2026-03-31</span>
+      </div>
+    </header>
+
+    <aside class="sidebar" aria-label="Kartkontroller">
+      <fieldset>
+        <legend>Kartlager</legend>
+        <label class="radio-row">
+          <input type="radio" name="baselayer" value="osm" checked />
+          OpenStreetMap
+        </label>
+        <label class="radio-row">
+          <input type="radio" name="baselayer" value="satellite" />
+          Satellit
+        </label>
+      </fieldset>
+
+      <div class="actions">
+        <button type="button" id="btn-reload" class="btn">Uppdatera data</button>
+      </div>
+
+      <p class="hint" id="status-msg">Hämtar energibrunnar från SGU …</p>
+      <p class="hint small">
+        Klicka på en punkt för brunnsuppgifter. Kluster expanderas vid inzoomning.
+      </p>
+      <p class="hint small source">
+        Källa:
+        <a
+          href="https://www.sgu.se/produkter-och-tjanster/geologiska-data/brunnar--geologiska-data/brunnar/"
+          target="_blank"
+          rel="noopener noreferrer"
+          >SGU Brunnar</a
+        >
+      </p>
+    </aside>
+
+    <main id="map" role="application" aria-label="Karta över energibrunnar"></main>
+
+    <script
+      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+      crossorigin=""
+    ></script>
+    <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+    <script src="app.js" type="module"></script>
+  </body>
+</html>
