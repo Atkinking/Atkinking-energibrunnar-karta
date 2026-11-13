@@ -173,6 +173,36 @@ legend {
   cursor: pointer;
 }
 
+.check-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.45rem;
+  margin: 0.35rem 0;
+  font-size: 0.88rem;
+  cursor: pointer;
+  line-height: 1.35;
+}
+
+.check-row input {
+  margin-top: 0.2rem;
+  flex-shrink: 0;
+}
+
+.check-row-nested {
+  margin-left: 0.35rem;
+  font-size: 0.82rem;
+  color: #475569;
+}
+
+.check-row:has(input:disabled) {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.filter-note code {
+  font-size: 0.95em;
+}
+
 .btn {
   width: 100%;
   padding: 0.5rem 0.75rem;

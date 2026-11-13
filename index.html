@@ -58,6 +58,8 @@
           <p class="subtitle">
             Data från SGU:s Brunnsarkiv (öppna data, CC0). Projektnamnet «SBC» avser
             här registerkällan för energibrunnar, inte SBC/Sveriges BostadsrättsCentrum.
+            SGU saknar fält för nybygge – filtret «Endast nybygge» bygger på fritext i
+            läges- och anmärkningsfält (uppskattningsvis cirka 10–11 träffar av 5 028 i perioden).
           </p>
         </div>
         <div class="stats" id="stats" aria-live="polite">
@@ -77,6 +79,23 @@
             <input type="radio" name="baselayer" value="satellite" />
             Satellit
           </label>
+        </fieldset>
+
+        <fieldset>
+          <legend>Visning</legend>
+          <label class="check-row">
+            <input type="checkbox" id="filter-nybygge" />
+            Endast nybygge
+          </label>
+          <label class="check-row check-row-nested">
+            <input type="checkbox" id="filter-nybygge-strict" disabled />
+            Strikt läge (exkl. tydlig befintlig bostad)
+          </label>
+          <p class="hint small filter-note">
+            Nybygge finns inte som eget attribut i Brunnsarkivet – bara i fritext
+            (<code>lage_specifikt</code>, <code>allman_anmarkning</code>). Vid behov kan
+            en extern SBC-lista kopplas in som allowlist.
+          </p>
         </fieldset>
 
         <div class="actions">

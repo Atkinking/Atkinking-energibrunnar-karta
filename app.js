@@ -1,3 +1,9 @@
+import {
+  filterFeaturesForMap,
+  describeNybyggeFilterCounts,
+  NYBYGGE_TEXT_PROPERTY_KEYS,
+} from "./filter-config.js";
+
 const DATE_FROM = "20251001";
 const DATE_TO = "20260331";
 const API_BASE =
@@ -54,6 +60,35 @@ document.querySelectorAll('input[name="baselayer"]').forEach((input) => {
 const statCount = document.getElementById("stat-count");
 const statusMsg = document.getElementById("status-msg");
 const btnReload = document.getElementById("btn-reload");
+const filterNybygge = document.getElementById("filter-nybygge");
+const filterNybyggeStrict = document.getElementById("filter-nybygge-strict");
+
+/** @type {object[]} */
+let allFeatures = [];
+let hasFittedBounds = false;
+
+function getFilterOptions() {
+  return {
+    onlyNybygge: Boolean(filterNybygge?.checked),
+    strictNybygge: Boolean(filterNybyggeStrict?.checked),
+  };
+}
+
+function updateStrictDisabled() {
+  if (!filterNybyggeStrict || !filterNybygge) return;
+  const on = filterNybygge.checked;
+  filterNybyggeStrict.disabled = !on;
+  if (!on) filterNybyggeStrict.checked = false;
+}
+
+function updateStatCount(shown, total) {
+  const opts = getFilterOptions();
+  if (opts.onlyNybygge) {
+    statCount.textContent = describeNybyggeFilterCounts(shown, total);
+    return;
+  }
+  statCount.textContent = `${total.toLocaleString("sv-SE")} energibrunnar i perioden`;
+}
 
 function formatBorrdatum(raw) {
   if (!raw) return "–";
@@ -79,6 +114,13 @@ function popupHtml(props) {
     ["Användning", props.anvandning ?? "–"],
     ["Lägeskvalitet", props.posvardering ?? "–"],
   ];
+  for (const key of NYBYGGE_TEXT_PROPERTY_KEYS) {
+    const val = props[key];
+    if (val) {
+      const label = key === "lage_specifikt" ? "Läge (specifikt)" : "Allmän anmärkning";
+      rows.push([label, val]);
+    }
+  }
   const body = rows
     .map(
       ([k, v]) =>
@@ -119,7 +161,7 @@ async function fetchAllFeatures() {
   return features;
 }
 
-function renderFeatures(features) {
+function renderFeatures(features, { fitBounds = false } = {}) {
   clusterGroup.clearLayers();
   const markers = [];
 
@@ -134,12 +176,19 @@ function renderFeatures(features) {
 
   clusterGroup.addLayers(markers);
 
-  if (markers.length > 0) {
+  if (fitBounds && markers.length > 0) {
     const bounds = clusterGroup.getBounds();
     if (bounds.isValid()) {
       map.fitBounds(bounds.pad(0.08));
+      hasFittedBounds = true;
     }
   }
+}
+
+function applyClientFilters({ fitBounds = false } = {}) {
+  const filtered = filterFeaturesForMap(allFeatures, getFilterOptions());
+  renderFeatures(filtered, { fitBounds });
+  updateStatCount(filtered.length, allFeatures.length);
 }
 
 async function loadData() {
@@ -148,12 +197,14 @@ async function loadData() {
   statusMsg.textContent = "Kontaktar SGU:s öppna API …";
 
   try {
-    const features = await fetchAllFeatures();
-    renderFeatures(features);
-    statCount.textContent = `${features.length.toLocaleString("sv-SE")} energibrunnar i perioden`;
+    allFeatures = await fetchAllFeatures();
+    hasFittedBounds = false;
+    applyClientFilters({ fitBounds: true });
     statusMsg.textContent = `Senast uppdaterad: ${new Date().toLocaleString("sv-SE")}`;
   } catch (err) {
     console.error(err);
+    allFeatures = [];
+    clusterGroup.clearLayers();
     statCount.textContent = "Kunde inte ladda data";
     statusMsg.textContent =
       err instanceof Error ? err.message : "Okänt fel vid hämtning.";
@@ -162,5 +213,15 @@ async function loadData() {
   }
 }
 
+filterNybygge?.addEventListener("change", () => {
+  updateStrictDisabled();
+  applyClientFilters({ fitBounds: !hasFittedBounds });
+});
+
+filterNybyggeStrict?.addEventListener("change", () => {
+  applyClientFilters({ fitBounds: false });
+});
+
+updateStrictDisabled();
 btnReload.addEventListener("click", () => loadData());
 loadData();
