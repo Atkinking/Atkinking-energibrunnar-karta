@@ -28,6 +28,14 @@ const FILTER = encodeURIComponent(
   `anvandning_kod='ENE' AND borrdatum >= '${DATE_FROM}' AND borrdatum <= '${DATE_TO}'`
 );
 
+const MOBILE_MAX_WIDTH = 640;
+
+function isMobileLayout() {
+  return window.matchMedia(`(max-width: ${MOBILE_MAX_WIDTH}px)`).matches;
+}
+
+const initialMobileLayout = isMobileLayout();
+
 const osmLayer = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
   maxZoom: 19,
   attribution:
@@ -47,17 +55,18 @@ const map = L.map("map", {
   center: [62.5, 16.5],
   zoom: 5,
   layers: [osmLayer],
+  preferCanvas: true,
 });
 
-const CLUSTER_DISABLE_ZOOM = 16;
+const CLUSTER_DISABLE_ZOOM = 18;
 
 const clusterGroup = L.markerClusterGroup({
   chunkedLoading: true,
-  chunkDelay: 50,
-  maxClusterRadius: 50,
-  spiderfyOnMaxZoom: true,
+  chunkDelay: initialMobileLayout ? 80 : 50,
+  maxClusterRadius: initialMobileLayout ? 80 : 50,
+  spiderfyOnMaxZoom: !initialMobileLayout,
   showCoverageOnHover: false,
-  removeOutsideVisibleBounds: false,
+  removeOutsideVisibleBounds: initialMobileLayout,
   disableClusteringAtZoom: CLUSTER_DISABLE_ZOOM,
   animateAddingMarkers: false,
   zoomToBoundsOnClick: true,
@@ -156,15 +165,15 @@ function registerTemporalKind(source) {
   return "plan/lov";
 }
 
-function scheduleMapClusterRefresh() {
-  window.requestAnimationFrame(() => {
+let mapInvalidateTimer = 0;
+const MAP_INVALIDATE_DEBOUNCE_MS = 150;
+
+/** Efter sidebar-layout: bara invalidateSize — inga refreshClusters vid pinch/zoom. */
+function scheduleMapInvalidateSize() {
+  window.clearTimeout(mapInvalidateTimer);
+  mapInvalidateTimer = window.setTimeout(() => {
     map.invalidateSize({ animate: false, pan: false });
-    window.requestAnimationFrame(() => {
-      if (typeof clusterGroup.refreshClusters === "function") {
-        clusterGroup.refreshClusters();
-      }
-    });
-  });
+  }, MAP_INVALIDATE_DEBOUNCE_MS);
 }
 
 function formatBorrdatum(raw) {
@@ -213,6 +222,14 @@ function escapeHtml(str) {
     .replaceAll("<", "&lt;")
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;");
+}
+
+function attachLazyPopup(marker, properties) {
+  marker.on("click", () => {
+    if (!marker.getPopup()) {
+      marker.bindPopup(popupHtml(properties));
+    }
+  });
 }
 
 async function fetchAllFeatures() {
@@ -312,7 +329,7 @@ function renderFeatures(features, { fitBounds = false } = {}) {
     if (!coords || f.geometry?.type !== "Point") continue;
     const [lon, lat] = coords;
     const marker = L.marker([lat, lon]);
-    marker.bindPopup(popupHtml(f.properties || {}));
+    attachLazyPopup(marker, f.properties || {});
     markers.push(marker);
   }
 
@@ -417,15 +434,10 @@ if (storedKey && combifyKeyInput) {
 
 btnReload.addEventListener("click", () => loadData());
 
-const MOBILE_MAX_WIDTH = 640;
 const sidebarEl = document.getElementById("sidebar");
 const sidebarToggle = document.getElementById("sidebar-toggle");
 const sidebarPanel = document.getElementById("sidebar-panel");
 const appShell = document.getElementById("app-shell");
-
-function isMobileLayout() {
-  return window.matchMedia(`(max-width: ${MOBILE_MAX_WIDTH}px)`).matches;
-}
 
 function setMobileSidebarCollapsed(collapsed) {
   if (!sidebarEl || !sidebarToggle || !sidebarPanel) return;
@@ -439,7 +451,7 @@ function setMobileSidebarCollapsed(collapsed) {
   sidebarEl.dataset.mobileCollapsed = collapsed ? "true" : "false";
   sidebarToggle.setAttribute("aria-expanded", collapsed ? "false" : "true");
   appShell?.classList.toggle("sidebar-expanded", !collapsed);
-  scheduleMapClusterRefresh();
+  scheduleMapInvalidateSize();
 }
 
 function toggleMobileSidebar() {
@@ -472,15 +484,9 @@ function initMobileSidebar() {
     .matchMedia(`(max-width: ${MOBILE_MAX_WIDTH}px)`)
     .addEventListener("change", () => {
       setMobileSidebarCollapsed(true);
-      scheduleMapClusterRefresh();
+      scheduleMapInvalidateSize();
     });
 }
-
-map.on("zoomend", () => {
-  if (isMobileLayout() && typeof clusterGroup.refreshClusters === "function") {
-    clusterGroup.refreshClusters();
-  }
-});
 
 initMobileSidebar();
 loadData();
